@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="https://d3js.org/d3-timer.v1.min.js"></script>
+
+    <style>
+	
+	body {
+		margin:0;
+	}
+	
+	#wholeApp {
+		max-width:600px;
+		text-align: center;
+	}
+	
+	.mannequin {
+		font-family: 'Roboto';
+		font-size:22px;
+	}
+	
+	#satCount {
+		float:right;
+		margin-right: 50px;
+	}
+	
+	#dateJour {
+		float:left;
+		margin-left: 50px;
+	}
+	
+	.slider {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 15px;
+    border-radius: 5px;   
+    background: #b9bebe;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+	margin-top:30px;
+	}
+
+	.slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 25px;
+		height: 25px;
+		border-radius: 50%; 
+		background: #f03219;
+		cursor: pointer;
+	}
+
+	.slider::-moz-range-thumb {
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background: #f03219;
+		cursor: pointer;
+	}
+	
+	.nombre {
+	font-family: 'Roboto';
+		font-size:16px;
+	}
+	
+	.btn-success {
+	margin-top:20px;
+	font-family: 'Roboto';
+    color: #fff;
+    background-color: #222;
+    border-color: #4cae4c;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+	.btn-primary {
+	margin-top:20px;
+	font-family: 'Roboto';
+    color: #000;
+    background-color: #ffc500;
+    border-color: #4cae4c;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+	
+	
+    </style>
+
+  </head>
+  <body>
+	
+	<div id="wholeApp">
+	<div class="mannequin" id="dateJour">1957</div>
+	<div class="mannequin" id="satCount">1 satellite</div>
+	<div id="svg" style="width: 600px; height: 600px"></div>
+	<span class="nombre">1957</span><input type="range" min="1957" max="2018" value="1957" class="slider" id="monRang"><span class="nombre">2018</span>
+	
+	<button onclick="reset()" class="btn btn-success">Réinitialiser</button>
+    <button onclick="autoPlay()" class="btn btn-primary">Lancer l'animation</button>
+	</div>
+   
+    <script type="text/javascript">
+		var addRandomDebris, i, render, satellites, source;
+
+		var getRandomFromBetween = function(min, max) {
+		  return Math.floor(Math.random() * (max - min + 1) + min);
+		};
+
+		function reset() {
+		document.getElementById("monRang").value = 1957;
+		rangeChange();
+		}
+		
+		function sliderValChange(e) {
+			document.getElementById("dateJour").innerHTML = e;
+			var t = dataVals[e].reduce(function(e, t) {
+				return t
+			}, 0);
+			rangeChange();
+		}
+
+		
+		function getCurrentYear() {
+		return document.getElementById("monRang").value
+		}
+		
+		function autoPlay() {
+		getCurrentYear() != endYear && (document.getElementById("monRang").value++, sliderValChange(document.getElementById("monRang").value), setTimeout(function() {
+			autoPlay()
+		}, 500))
+		}
+			
+		satellites = [];
+
+		var addRandomSatellites = function() {
+		  satellites.push({
+			distance: getRandomFromBetween(50, 275),
+			size: getRandomFromBetween(2, 6),
+			speed: getRandomFromBetween(5, 30),
+			angle: getRandomFromBetween(1, 359)
+		  });
+		};
+		
+		var dataVals = {
+			1957: [1],
+			1958: [1],
+			1959: [2],
+			1960: [4],
+			1961: [7],
+			1962: [13],
+			1963: [22],
+			1964: [39],
+			1965: [70],
+			1966: [98],
+			1967: [122],
+			1968: [134],
+			1969: [153],
+			1970: [160],
+			1971: [174],
+			1972: [183],
+			1973: [179],
+			1974: [196],
+			1975: [217],
+			1976: [249],
+			1977: [259],
+			1978: [287],
+			1979: [314],
+			1980: [314],
+			1981: [322],
+			1982: [341],
+			1983: [352],
+			1984: [372],
+			1985: [384],
+			1986: [400],
+			1987: [414],
+			1988: [421],
+			1989: [425],
+			1990: [443],
+			1991: [479],
+			1992: [495],
+			1993: [516],
+			1994: [519],
+			1995: [531],
+			1996: [545],
+			1997: [558],
+			1998: [632],
+			1999: [698],
+			2000: [743],
+			2001: [764],
+			2002: [784],
+			2003: [821],
+			2004: [835],
+			2005: [851],
+			2006: [854],
+			2007: [889],
+			2008: [924],
+			2009: [966],
+			2010: [985],
+			2011: [998],
+			2012: [1059],
+			2013: [1115],
+			2014: [1243],
+			2015: [1328],
+			2016: [1463],
+			2017: [1740],
+			2018: [1901],
+			};
+			
+		var startYear = 1957;
+		var endYear = 2018;
+		var timer;
+		
+		var rangeSlider = document.getElementById('monRang');
+        rangeSlider.addEventListener('change', rangeChange);
+
+		function rangeChange(e) {
+			document.getElementById('dateJour').innerHTML = rangeSlider.value;
+			document.getElementById('satCount').innerHTML = dataVals[rangeSlider.value] + ' satellites';
+			
+			timer.stop();
+
+			var nbSatellites = dataVals[rangeSlider.value];
+			if (nbSatellites > 0) {
+				satellites = [];
+				while (nbSatellites-- > 0) {
+				  addRandomSatellites();
+				}
+				if (satellites.length) {
+					render(satellites, source);
+				}
+			}
+			
+		};		
+		
+		i = 1;
+
+		while (i-- > 0) {
+		  addRandomSatellites();
+		}
+
+		render = function(satellites, source) {
+		  var animateFrames, container, dimensions, svg, timeZero;
+		  document.getElementById('svg').innerHTML = '';
+			
+		  dimensions = {
+			width: 600,
+			height: 600
+		  };
+			
+		  timeZero = Date.now();
+			
+		  svg = d3.select('#svg')
+			.insert('svg')
+			.attr('viewBox', '0, 0, 600, 600')
+			.attr('class', 'game-planetarium');
+			
+		  svg.append('image')
+			.attr("xlink:href", "https://raw.githubusercontent.com/nicolasenault/satellites/master/earth.png")
+			.attr('x', dimensions.width * 0.5-30)
+			.attr('y', dimensions.height * 0.5-30)
+			.attr('class', 'source');
+			
+		  container = svg.append('g')
+			.attr('transform', 'translate(' + dimensions.width * 0.5 + ',' + dimensions.height * 0.5 + ')');
+			
+		  container.selectAll('g.satellite')
+			.data(satellites)
+			.enter()
+			.append('g')
+			.attr('class', 'satellite')
+			.each(function(d, i) {
+				d3.select(this)
+					.append('image')
+					.attr("xlink:href", "https://raw.githubusercontent.com/nicolasenault/satellites/master/sat.png")
+					.attr('x', d.distance)
+					.attr('y', 0)
+					.attr('class', 'satellite')
+					.attr('transform', 'rotate(' + d.angle + ')');
+			});
+
+		animateFrames = function() {
+			var delta = Date.now() - timeZero;
+			timeZero += delta;
+
+			svg.selectAll('.satellite')
+				.each(function (d) {
+					var satellite = d3.select(this);
+					var t = d3.transform(satellite.attr("transform"));
+					t.rotate += delta * d.speed / 10000;
+					satellite.attr("transform", "rotate(" + t.rotate + ")");
+				});
+		};
+			
+		timer = d3.timer(animateFrames);
+		};
+
+		(function() {
+		  render(satellites, source);
+		})();
+
+    </script>
+
+
+  </body>
+
+</html>
